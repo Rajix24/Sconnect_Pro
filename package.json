@@ -1,0 +1,25 @@
+{
+  "name": "sconnect_pro",
+  "version": "1.0.0",
+  "description": "user story:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rajix24/Sconnect_Pro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Rajix24/Sconnect_Pro/issues"
+  },
+  "homepage": "https://github.com/Rajix24/Sconnect_Pro#readme",
+  "dependencies": {
+    "ejs": "^6.0.1"
+  }
+}
