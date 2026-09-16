@@ -1,27 +1,14 @@
-const pageController = require("../controllers/page.controller");
+const { home, about, contact } = require("../controllers/page.controller");
+const   router = require("find-my-way")({
+    defaultRoute: (req, res) => {
+    res.statusCode = 404
+    res.end()
+  }
+})
 
-function router(req, res) {
 
-    if (req.method === "GET" && req.url === "/") {
-        pageController.getAll(req, res);
-        return
-    }
-
-    if (req.method === "GET" && req.url === "/about") {
-        pageController.about(req, res);
-        return;
-    }
-
-    if (req.method === "GET" && req.url === "/contact") {
-        pageController.contact(req, res);
-        return;
-    }
-
-    res.writeHead(404, {
-        "Content-Type": "text/plain"
-    });
-
-    res.end("404 - Page not found");
-}
+router.get('/', home)
+router.get('/about', about)
+router.get('/contact', contact)
 
 module.exports = router;

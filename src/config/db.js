@@ -12,7 +12,6 @@ class Database {
                 port: process.env.DATABASE_PORT,
                 database: process.env.DATABASE_NAME
             });
-
             Database.instance = this;
         }
 

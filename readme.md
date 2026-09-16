@@ -8,3 +8,12 @@ Les conflits d'occupation des salles et le respect des jauges de sécurité ERP 
 La tarification complexe (résidents, fratrie, quotient familial, Pass'Sport) ;
 Les catégories d'âge fédérales et la validité légale des certificats médicaux ;
 La gestion d'une file d'attente priorisée avec repêchage automatique sous 48h ;
+# How to run the porject:
+
+npm run rajix 
+    => to start server 
+npm run migrate 
+    => create tables is database
+npm run seeder
+    => Create fake data in database
+database is contonaires in docekr 

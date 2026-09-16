@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js",
-    "testdb": "node src/config/test.js"
+    "rajix": "node server.js",
+    "testdb": "node src/config/test.js",
+    "migrate": "node src/config/migrate.js",
+    "seeder": "node src/config/seeder.js"
   },
   "repository": {
     "type": "git",
