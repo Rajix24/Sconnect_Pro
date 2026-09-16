@@ -3,10 +3,14 @@ const path = require("node:path");
 
 async function home(req, res) {
 
+
+    const arr = ["younes rajix", "zakaria kssim"]
+
     const html = await ejs.renderFile(
         path.join(__dirname, "../../views/pages/Home.ejs"),
         {
-            title: "Home"
+            title: "Home",
+            arr: arr
         }
     );
 
@@ -17,7 +21,7 @@ async function home(req, res) {
     res.end(html);
 }
 
-async function activities(req, res) {
+async function about(req, res) {
 
     const html = await ejs.renderFile(
         path.join(__dirname, "../../views/pages/about.ejs"),
@@ -33,7 +37,7 @@ async function activities(req, res) {
     res.end(html);
 }
 
-async function members(req, res) {
+async function contact(req, res) {
 
     const html = await ejs.renderFile(
         path.join(__dirname, "../../views/pages/contact.ejs"),
@@ -51,6 +55,6 @@ async function members(req, res) {
 
 module.exports = {
     home,
-    activities,
-    members
+    about,
+    contact
 };

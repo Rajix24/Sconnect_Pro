@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "testdb": "node src/config/test.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,9 @@
   },
   "homepage": "https://github.com/Rajix24/Sconnect_Pro#readme",
   "dependencies": {
-    "ejs": "^6.0.1"
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "find-my-way": "^9.9.0",
+    "pg": "^8.23.0"
   }
 }

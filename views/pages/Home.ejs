@@ -5,15 +5,18 @@
 </head>
 
 <body>
+<h1><%= title %></h1>
 
-    <h1>SportConnect Pro</h1>
-
-    <p>Welcome to SportConnect Pro</p>
+<ul>
+    <% for (let i = 0; i < arr.length; i++) { %>
+        <li><%= arr[i] %></li>
+    <% } %>
+</ul>
 
     <nav>
         <a href="/">Home</a>
-        <a href="/activities">About</a>
-        <a href="/members">Contact Us</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact Us</a>
     </nav>
 
 </body>

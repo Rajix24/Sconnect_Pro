@@ -3,17 +3,17 @@ const pageController = require("../controllers/page.controller");
 function router(req, res) {
 
     if (req.method === "GET" && req.url === "/") {
-        pageController.home(req, res);
+        pageController.getAll(req, res);
+        return
+    }
+
+    if (req.method === "GET" && req.url === "/about") {
+        pageController.about(req, res);
         return;
     }
 
-    if (req.method === "GET" && req.url === "/activities") {
-        pageController.activities(req, res);
-        return;
-    }
-
-    if (req.method === "GET" && req.url === "/members") {
-        pageController.members(req, res);
+    if (req.method === "GET" && req.url === "/contact") {
+        pageController.contact(req, res);
         return;
     }
 
