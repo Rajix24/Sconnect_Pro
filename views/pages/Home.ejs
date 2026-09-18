@@ -1,23 +1,205 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title><%= title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SportConnect Pro — Réservation de créneaux et activités sportives</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/home.css">
 </head>
-
 <body>
-<h1><%= title %></h1>
 
-<ul>
-    <% for (let i = 0; i < arr.length; i++) { %>
-        <li><%= arr[i] %></li>
-    <% } %>
-</ul>
-
-    <nav>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact Us</a>
+  <header class="topbar">
+    <a href="/" class="wordmark">SportConnect<span>Pro</span></a>
+    <nav class="topnav">
+      <a href="/activites">Activités</a>
+      <a href="/equipements">Équipements</a>
+      <a href="/associations">Associations</a>
+      <a href="/tarifs">Tarifs</a>
     </nav>
+    <a href="/creneaux" class="btn btn-ghost">Voir les créneaux</a>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Direction des sports — service municipal en ligne</p>
+        <h1>Réservez un créneau. Rejoignez un club. Le tout depuis chez vous.</h1>
+        <p class="lede">
+          SportConnect Pro centralise les équipements sportifs municipaux, les
+          associations partenaires et leurs activités, pour que chaque habitant
+          trouve une place — au bon tarif, au bon horaire.
+        </p>
+        <div class="hero-actions">
+          <a href="/creneaux" class="btn btn-primary">Voir les créneaux disponibles</a>
+          <a href="/tarifs" class="btn btn-text">Comment est calculé mon tarif ?</a>
+        </div>
+      </div>
+
+      <div class="hero-board" role="group" aria-label="Chiffres du jour">
+        <p class="board-label">Aujourd'hui</p>
+        <div class="board-row">
+          <span class="board-number"><%= typeof stats !== 'undefined' && stats.openSlotsToday != null ? stats.openSlotsToday : '—' %></span>
+          <span class="board-desc">créneaux libres</span>
+        </div>
+        <div class="board-row">
+          <span class="board-number"><%= typeof stats !== 'undefined' && stats.totalFacilities != null ? stats.totalFacilities : '—' %></span>
+          <span class="board-desc">équipements ouverts au public</span>
+        </div>
+        <div class="board-row">
+          <span class="board-number"><%= typeof stats !== 'undefined' && stats.totalActivities != null ? stats.totalActivities : '—' %></span>
+          <span class="board-desc">activités proposées</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVITIES LEDGER -->
+    <section class="section" aria-labelledby="activites-title">
+      <div class="section-head">
+        <h2 id="activites-title">Activités &amp; prochains créneaux</h2>
+        <a href="/activites" class="link-more">Toutes les activités</a>
+      </div>
+
+      <div class="ledger" role="table" aria-label="Liste des activités">
+        <div class="ledger-row ledger-head" role="row">
+          <span role="columnheader">Activité</span>
+          <span role="columnheader">Catégorie d'âge</span>
+          <span role="columnheader">Prochain créneau</span>
+          <span role="columnheader">Places</span>
+        </div>
+
+        <% if (typeof activities !== 'undefined' && activities.length) { %>
+          <% activities.forEach(function(a) { %>
+            <div class="ledger-row" role="row">
+              <span role="cell" class="ledger-name"><%= a.name %></span>
+              <span role="cell"><%= a.ageCategory || '—' %></span>
+              <span role="cell" class="mono"><%= a.nextSlot || '—' %></span>
+              <span role="cell">
+                <% if (typeof a.remainingSpots === 'number' && a.remainingSpots <= 0) { %>
+                  <span class="tag tag-full">complet</span>
+                <% } else { %>
+                  <%= a.remainingSpots != null ? a.remainingSpots : '—' %>
+                <% } %>
+              </span>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="ledger-empty">Aucune activité à afficher pour l'instant. Revenez après la mise à jour du planning.</div>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- FACILITIES -->
+    <section class="section" aria-labelledby="equipements-title">
+      <div class="section-head">
+        <h2 id="equipements-title">Équipements municipaux</h2>
+        <a href="/equipements" class="link-more">Tous les équipements</a>
+      </div>
+
+      <div class="facility-grid">
+        <% if (typeof facilities !== 'undefined' && facilities.length) { %>
+          <% facilities.forEach(function(f) { %>
+            <article class="facility-card">
+              <p class="facility-type"><%= f.type || 'Équipement sportif' %></p>
+              <h3><%= f.name %></h3>
+              <p class="facility-address"><%= f.address || '' %></p>
+              <p class="facility-capacity"><%= f.capacity != null ? f.capacity + ' places' : '' %></p>
+            </article>
+          <% }); %>
+        <% } else { %>
+          <p class="ledger-empty">Aucun équipement enregistré pour l'instant.</p>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- ASSOCIATIONS -->
+    <section class="section section-tight" aria-labelledby="assoc-title">
+      <div class="section-head">
+        <h2 id="assoc-title">Associations partenaires</h2>
+        <a href="/associations" class="link-more">Toutes les associations</a>
+      </div>
+      <ul class="assoc-strip">
+        <% if (typeof associations !== 'undefined' && associations.length) { %>
+          <% associations.forEach(function(as) { %>
+            <li><%= as.name %></li>
+          <% }); %>
+        <% } else { %>
+          <li class="ledger-empty">Aucune association enregistrée pour l'instant.</li>
+        <% } %>
+      </ul>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how">
+      <h2>Comment ça marche</h2>
+      <ol class="how-steps">
+        <li>
+          <span class="how-index">1</span>
+          <div>
+            <h3>Consultez les créneaux</h3>
+            <p>Filtrez par équipement, activité ou tranche d'âge pour voir les disponibilités réelles.</p>
+          </div>
+        </li>
+        <li>
+          <span class="how-index">2</span>
+          <div>
+            <h3>Vérifiez votre tarif</h3>
+            <p>Résident ou non, quotient familial, fratrie, Pass'Sport : le tarif est calculé avant la réservation.</p>
+          </div>
+        </li>
+        <li>
+          <span class="how-index">3</span>
+          <div>
+            <h3>Inscrivez-vous et payez</h3>
+            <p>Réglez en une fois ou en 3 fois. En cas de complet, une place en liste d'attente vous est proposée.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- PRICING NOTE -->
+    <section class="section pricing-note" aria-labelledby="tarifs-title">
+      <h2 id="tarifs-title">Ce qui influence votre tarif</h2>
+      <div class="pricing-grid">
+        <div class="pricing-item">
+          <p class="pricing-label">Résidence</p>
+          <p>+35 % pour les habitants hors commune.</p>
+        </div>
+        <div class="pricing-item">
+          <p class="pricing-label">Fratrie</p>
+          <p>-15 % à partir du 2ᵉ enfant inscrit, -30 % à partir du 3ᵉ.</p>
+        </div>
+        <div class="pricing-item">
+          <p class="pricing-label">Quotient familial</p>
+          <p>Remise appliquée automatiquement selon votre QF.</p>
+        </div>
+        <div class="pricing-item">
+          <p class="pricing-label">Pass'Sport</p>
+          <p>-50 € déduits directement si vous en bénéficiez.</p>
+        </div>
+      </div>
+      <p class="pricing-footnote">Un tarif plancher de 15 € s'applique dans tous les cas. Paiement possible en 3 fois.</p>
+    </section>
+
+  </main>
+
+  <footer class="sitefoot">
+    <div>
+      <p class="wordmark small">SportConnect<span>Pro</span></p>
+      <p>Direction des sports — service municipal</p>
+    </div>
+    <div class="sitefoot-links">
+      <a href="/creneaux">Créneaux</a>
+      <a href="/activites">Activités</a>
+      <a href="/equipements">Équipements</a>
+      <a href="/associations">Associations</a>
+      <a href="/tarifs">Tarifs</a>
+    </div>
+  </footer>
 
 </body>
 </html>

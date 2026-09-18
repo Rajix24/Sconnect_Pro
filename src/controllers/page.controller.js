@@ -1,25 +1,15 @@
 const ejs = require("ejs");
 const path = require("node:path");
-
+const { getAllActivites } = require("../services/Activities.service");
+//TODO: GET LIST FORM DATABASE AND SHOW IT IN BROWSER
 async function home(req, res) {
-
-
-    const arr = ["younes rajix", "zakaria kssim"]
-
-    const html = await ejs.renderFile(
-        path.join(__dirname, "../../views/pages/Home.ejs"),
-        {
-            title: "Home",
-            arr: arr
-        }
-    );
-
-    res.writeHead(200, {
-        "Content-Type": "text/html"
-    });
-
+    const Activities = await  getAllActivites()
+    const html = await ejs.renderFile(path.join(__dirname, "../../views/pages/Home.ejs"),{title: "Home", data: Activities.rows});
+    res.writeHead(200, {"Content-Type": "text/html"});
     res.end(html);
 }
+
+// SELECT * FROM activities AS ac JOIN associations AS asco ON ac.association_id = asco.id JOIN facilities AS a ON ac.facility_id = a.id;
 
 async function about(req, res) {
 
@@ -34,6 +24,13 @@ async function about(req, res) {
         "Content-Type": "text/html"
     });
 
+    res.end(html);
+}
+
+async function  activity(rep, res){
+    const Activities = await  getAllActivites()
+    const html = await ejs.renderFile(path.join(__dirname, "../../views/pages/activity.ejs"),{title: "Activity", data: Activities.rows});
+    res.writeHead(200, {"Content-Type": "text/html"});
     res.end(html);
 }
 
@@ -56,5 +53,6 @@ async function contact(req, res) {
 module.exports = {
     home,
     about,
-    contact
+    contact,
+    activity
 };
