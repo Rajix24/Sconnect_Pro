@@ -25,8 +25,9 @@ async function getAllActivites(){
 
         JOIN facilities AS a
             ON ac.facility_id = a.id;`
-    const Activites = await db.query(query)
-    return Activites;
+    // const Activites = await db.query(query)
+    const Activities = ["yoga", "swimming", "basketball", "tennis", "soccer", "volleyball", "badminton", "table tennis", "martial arts", "dance"]
+    return Activities;
 }
 
 
