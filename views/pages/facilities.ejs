@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Facilities | SportConnect Pro</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="app-page">
+	<%- include('../components/header') %>
+	<% const facilityList = Array.isArray(facilities) ? facilities : []; %>
+	<% const associationList = Array.isArray(associations) ? associations : []; %>
+	<% const parentFacilityList = Array.isArray(parentFacilities) ? parentFacilities : []; %>
+	<main class="app-main">
+		<div class="page-heading">
+			<div><p class="eyebrow">Municipal infrastructure</p><h1>Sports facilities</h1><p class="page-intro">Manage the places where local associations and activities take place.</p></div>
+			<span class="count-pill"><%= facilityList.length %> facilit<%= facilityList.length === 1 ? 'y' : 'ies' %></span>
+		</div>
+		<div class="toolbar">
+			<label class="search-field" for="facility-search"><span>Search</span><input id="facility-search" type="search" placeholder="Facility or association name" data-filter-input="facility-list"></label>
+			<span class="toolbar-note">Capacity and assignment overview</span>
+		</div>
+		<div class="facility-management-layout">
+			<section id="facility-list" class="facility-admin-grid" aria-label="Facility list">
+				<% if (facilityList.length) { %>
+					<% facilityList.forEach(function(facility) { %>
+						<article class="facility-admin-card" data-filter-item>
+							<div class="card-topline"><span class="status-badge status-open">Active</span><span class="facility-id">#<%= facility.id %></span></div>
+							<h2><%= facility.name %></h2>
+							<p class="card-context"><%= facility.association_name || 'No association assigned' %></p>
+							<div class="facility-capacity-block">
+								<div class="capacity-line"><span>ERP capacity</span><strong><%= facility.erp_capacity %> places</strong></div>
+								<div class="capacity-meter" role="img" aria-label="Capacity: <%= facility.erp_capacity %> places"><span style="width: 72%"></span></div>
+							</div>
+							<div class="facility-details"><span><%= facility.is_divisible ? 'Divisible space' : 'Single space' %></span><% if (facility.parent_facility_id) { %><span>Sub-facility</span><% } %></div>
+						</article>
+					<% }); %>
+				<% } else { %>
+					<div class="empty-state"><strong>No facilities registered</strong><span>Create the first facility using the form.</span></div>
+				<% } %>
+			</section>
+			<section class="panel form-panel" aria-labelledby="new-facility-title">
+				<div class="panel-heading"><div><p class="eyebrow">New infrastructure</p><h2 id="new-facility-title">Add a facility</h2></div></div>
+				<p class="form-helper">Assign the facility to an association and define how its space can be used.</p>
+				<form action="/facilities_post" method="POST" class="stacked-form">
+					<label for="name">Facility name<input type="text" id="name" name="name" maxlength="255" placeholder="E.g. Central sports hall" required></label>
+					<label for="association_id">Association<select id="association_id" name="association_id" required><option value="">Select an association</option><% associationList.forEach(function(association) { %><option value="<%= association.id %>"><%= association.name %></option><% }); %></select></label>
+					<label for="erp_capacity">ERP capacity<input type="number" id="erp_capacity" name="erp_capacity" min="1" step="1" placeholder="100" required></label>
+					<label class="checkbox-field" for="is_divisible"><input type="checkbox" id="is_divisible" name="is_divisible"><span>This facility can be divided into sub-spaces</span></label>
+					<label for="parent_facility_id">Parent facility <span class="optional-label">Optional</span><select id="parent_facility_id" name="parent_facility_id"><option value="">No parent facility</option><% parentFacilityList.forEach(function(parentFacility) { %><option value="<%= parentFacility.id %>"><%= parentFacility.name %></option><% }); %></select></label>
+					<button type="submit" class="btn btn-primary form-submit">Save facility</button>
+				</form>
+			</section>
+		</div>
+	</main>
+	<script>
+		document.querySelector('[data-filter-input]')?.addEventListener('input', function (event) {
+			const query = event.target.value.toLowerCase().trim();
+			document.querySelectorAll('[data-filter-item]').forEach(function (item) { item.hidden = query && !item.textContent.toLowerCase().includes(query); });
+		});
+	</script>
+</body>
+</html>

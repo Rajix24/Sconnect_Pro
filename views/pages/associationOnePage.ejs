@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><%= title || 'Association' %> | SportConnect Pro</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/css/home.css">
+	<style>
+		.association-delete-btn {
+			background: #fff;
+			border-color: #1d6fa5;
+			color: #1d6fa5;
+			cursor: pointer;
+		}
+
+		.association-delete-btn:hover {
+			background: #1d6fa5;
+			color: #fff;
+		}
+
+		.association-hero-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			justify-content: flex-end;
+		}
+	</style>
+</head>
+<body class="app-page">
+	<%- include('../components/header') %>
+	<% const association = Array.isArray(data) ? data[0] : data; %>
+	<main class="app-main association-detail-main">
+		<a class="back-link" href="/associations">← Back to associations</a>
+		<% if (association) { %>
+			<section class="association-hero" aria-labelledby="association-name">
+				<div>
+					<p class="eyebrow">Partner association</p>
+					<h1 id="association-name"><%= association.association_name || association.name || 'Unnamed association' %></h1>
+					<p class="association-lede"><%= association.description || 'A local sports association working with the municipality.' %></p>
+				</div>
+				<div class="association-hero-actions">
+					<a class="btn btn-primary" href="/association/edit/<%= association.association_id || association.id %>">Edit association</a>
+                    <a class="btn btn-primary" href="/activities?association_id=<%= association.association_id || association.id %>">Create activity</a>
+                    <form action="/assocaitions/<%= association.association_id  %>/delete" method="post">
+                        <button type="submit" class="btn association-delete-btn">Delete association</button>
+                    </form>
+
+				</div>
+			</section>
+
+			<div class="association-detail-grid">
+				<section class="panel detail-panel" aria-labelledby="association-information-title">
+					<div class="panel-heading"><div><p class="eyebrow">Overview</p><h2 id="association-information-title">Association information</h2></div></div>
+					<dl class="detail-list">
+						<div><dt>Email</dt><dd><a href="mailto:<%= association.contact_email || '' %>"><%= association.contact_email || 'Not provided' %></a></dd></div>
+						<div><dt>Phone</dt><dd><%= association.phone || 'Not provided' %></dd></div>
+						<div><dt>Base price</dt><dd><strong><%= association.base_price != null ? Number(association.base_price).toFixed(2) + ' €' : 'Not provided' %></strong></dd></div>
+						<div><dt>SIREN number</dt><dd class="mono"><%= association.siren_number || 'Not provided' %></dd></div>
+					</dl>
+				</section>
+				<aside class="detail-callout">
+					<span class="callout-mark">+</span>
+					<p class="eyebrow">Ready to join?</p>
+					<h2>Find your place in the club.</h2>
+					<p>Register with this association to access its sports activities and schedules.</p>
+					<a class="btn btn-primary" href="#member-registration">Start registration</a>
+				</aside>
+			</div>
+
+			<section id="member-registration" class="panel association-registration-panel" aria-labelledby="member-registration-title">
+				<div class="panel-heading">
+					<div>
+						<p class="eyebrow">Member registration</p>
+						<h2 id="member-registration-title">Join to <%= association.association_name || association.name || 'Unnamed association' %></h2>
+					</div>
+					<span class="panel-caption">Fields marked * are required</span>
+				</div>
+
+				<form action="/register" method="POST" class="stacked-form">
+					<input type="hidden" name="association_id" value="<%= association.association_id || association.id %>">
+
+					<div class="form-row">
+						<label for="family_id">Family number *
+							<input type="number" id="family_id" name="family_id" min="1" step="1" required>
+						</label>
+						<label for="birth_date">Date of birth *
+							<input type="date" id="birth_date" name="birth_date" autocomplete="bday" required>
+						</label>
+					</div>
+
+					<div class="form-row">
+						<label for="first_name">First name *
+							<input type="text" id="first_name" name="first_name" maxlength="100" autocomplete="given-name" required>
+						</label>
+						<label for="last_name">Last name *
+							<input type="text" id="last_name" name="last_name" maxlength="100" autocomplete="family-name" required>
+						</label>
+					</div>
+
+					<div class="form-row">
+						<label for="medical_certificate_date">Medical certificate date
+							<input type="date" id="medical_certificate_date" name="medical_certificate_date">
+						</label>
+						<label for="medical_status">Medical status *
+							<select id="medical_status" name="medical_status" required>
+								<option value="compliant">Compliant</option>
+								<option value="medical_non_compliant">Medical non-compliant</option>
+							</select>
+						</label>
+					</div>
+
+					<label for="pass_sport_code">Pass Sport code
+						<input type="text" id="pass_sport_code" name="pass_sport_code" maxlength="20">
+					</label>
+
+					<label class="checkbox-label" for="is_resident">
+						<input type="checkbox" id="is_resident" name="is_resident" value="true">
+						The member lives in the municipality.
+					</label>
+
+					<button type="submit" class="btn btn-primary form-submit">Register member</button>
+				</form>
+			</section>
+		<% } else { %>
+			<section class="empty-state association-detail-empty"><strong>Association not found</strong><span>Return to the directory to choose an association.</span><a class="btn btn-primary" href="/associations">View associations</a></section>
+		<% } %>
+	</main>
+</body>
+</html>

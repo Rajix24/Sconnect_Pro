@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Activity' %> | SportConnect Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="app-page">
+    <%- include('../components/header') %>
+    <% const activity = Array.isArray(data) ? data[0] : data; %>
+    <main class="app-main association-detail-main">
+        <a class="back-link" href="/activities">← Back to activities</a>
+
+        <% if (activity) { %>
+            <section class="association-hero" aria-labelledby="activity-name">
+                <div>
+                    <p class="eyebrow">Scheduled sports activity</p>
+                    <h1 id="activity-name"><%= activity.activity_name || activity.title || 'Unnamed activity' %></h1>
+                    <p class="association-lede">
+                        Offered by <strong><%= activity.association_name || 'Partner association' %></strong>
+                        at <strong><%= activity.facility_name || 'a municipal facility' %></strong>.
+                    </p>
+                </div>
+                <div class="association-hero-actions">
+                    <span class="status-badge status-open">Scheduled</span>
+                    <a class="btn btn-primary" href="#registration">Register</a>
+                </div>
+            </section>
+
+            <div class="association-detail-grid">
+                <section class="panel detail-panel" aria-labelledby="activity-information-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Activity information</p>
+                            <h2 id="activity-information-title">Schedule and details</h2>
+                        </div>
+                    </div>
+                    <dl class="detail-list">
+                        <div>
+                            <dt>Association</dt>
+                            <dd><%= activity.association_name || 'Not provided' %></dd>
+                        </div>
+                        <div>
+                            <dt>Facility</dt>
+                            <dd><%= activity.facility_name || 'To be confirmed' %></dd>
+                        </div>
+                        <div>
+                            <dt>Date</dt>
+                            <dd><%= activity.activity_date ? String(activity.activity_date).slice(0, 10) : 'To be confirmed' %></dd>
+                        </div>
+                        <div>
+                            <dt>Time</dt>
+                            <dd>
+                                <%= activity.start_time ? String(activity.start_time).slice(0, 5) : 'TBC' %>
+                                <% if (activity.end_time) { %> – <%= String(activity.end_time).slice(0, 5) %><% } %>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Audience</dt>
+                            <dd><%= activity.age_category || 'All ages' %></dd>
+                        </div>
+                        <div>
+                            <dt>Capacity</dt>
+                            <dd><%= activity.max_capacity != null ? activity.max_capacity + ' places' : 'Not provided' %></dd>
+                        </div>
+                        <div>
+                            <dt>Price</dt>
+                            <dd><strong><%= activity.base_price != null ? Number(activity.base_price).toFixed(2) + ' €' : 'Price on request' %></strong></dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <aside id="registration" class="detail-callout" aria-labelledby="registration-title">
+                    <span class="callout-mark">+</span>
+                    <p class="eyebrow">Ready to participate?</p>
+                    <h2 id="registration-title">Reserve your place.</h2>
+                    <p>Contact the association or start a member registration with this activity.</p>
+                    <a class="btn btn-primary" href="/register/<%= activity.association_id || '' %>?activity_id=<%= activity.activity_id || activity.id || '' %>">Start registration</a>
+                </aside>
+            </div>
+        <% } else { %>
+            <section class="empty-state association-detail-empty">
+                <strong>Activity not found</strong>
+                <span>Return to the activity list to choose an available activity.</span>
+                <a class="btn btn-primary" href="/activities">View activities</a>
+            </section>
+        <% } %>
+    </main>
+</body>
+</html>

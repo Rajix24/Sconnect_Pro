@@ -1,0 +1,42 @@
+<section class="panel form-panel activity-form-panel" aria-labelledby="new-activity-title">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">New schedule</p>
+            <h2 id="new-activity-title">Create an activity</h2>
+        </div>
+    </div>
+    <p class="form-helper">Create a schedule for an association and assign it to a sports facility.</p>
+    <form action="/activities" method="POST" class="stacked-form">
+        <div class="form-row">
+            <label for="association_id">Association ID
+                <input type="number" id="association_id" name="association_id" min="1" placeholder="e.g. 12" required>
+            </label>
+            <label for="facility_id">Facility ID
+                <input type="number" id="facility_id" name="facility_id" min="1" placeholder="e.g. 4" required>
+            </label>
+        </div>
+        <label for="title">Activity title
+            <input type="text" id="title" name="title" maxlength="255" placeholder="e.g. Adult swimming" required>
+        </label>
+        <div class="form-row">
+            <label for="base_price">Base price
+                <input type="number" id="base_price" name="base_price" min="0" step="0.01" placeholder="120.00" required>
+            </label>
+            <label for="max_capacity">Maximum capacity
+                <input type="number" id="max_capacity" name="max_capacity" min="1" step="1" placeholder="24" required>
+            </label>
+        </div>
+        <label for="activity_date">Activity date
+            <input type="date" id="activity_date" name="activity_date" required>
+        </label>
+        <div class="form-row">
+            <label for="start_time">Start time
+                <input type="time" id="start_time" name="start_time" required>
+            </label>
+            <label for="end_time">End time
+                <input type="time" id="end_time" name="end_time" required>
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Create activity</button>
+    </form>
+</section>

@@ -27,12 +27,6 @@ async function about(req, res) {
     res.end(html);
 }
 
-async function  activity(rep, res){
-    const Activities = await  getAllActivites()
-    const html = await ejs.renderFile(path.join(__dirname, "../../views/pages/activity.ejs"),{title: "Activity", data: Activities.rows});
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.end(html);
-}
 
 async function contact(req, res) {
 
@@ -53,6 +47,5 @@ async function contact(req, res) {
 module.exports = {
     home,
     about,
-    contact,
-    activity
+    contact
 };

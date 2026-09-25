@@ -1,0 +1,11 @@
+<section class="panel form-panel" aria-labelledby="new-association-title">
+    <div class="panel-heading"><div><p class="eyebrow">New partner</p><h2 id="new-association-title">Add an association</h2></div></div>
+    <form action="/activities_post" method="POST" class="stacked-form">
+        <label for="name">Association name<input type="text" id="name" name="name" placeholder="E.g. Municipal swimmers" required></label>
+        <label for="contact_email">Contact email<input type="email" id="contact_email" name="contact_email" placeholder="contact@association.org" required></label>
+        <div class="form-row"><label for="phone">Phone<input type="tel" id="phone" name="phone" placeholder="01 23 45 67 89" required></label><label for="base_price">Base price<input type="number" id="base_price" name="base_price" step="0.01" min="0" placeholder="300.00" required></label></div>
+        <label for="siren_number">SIREN number<input type="text" id="siren_number" name="siren_number" maxlength="14" placeholder="123456789" required></label>
+        <label for="description">Description<textarea id="description" name="description" rows="4" placeholder="A few words about the association"></textarea></label>
+        <button type="submit" class="btn btn-primary form-submit">Save association</button>
+    </form>
+</section>

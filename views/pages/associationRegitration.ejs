@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Association registration | SportConnect Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css">
+    <style>
+        .checkbox-label { display: flex !important; grid-template-columns: auto 1fr; align-items: center; gap: 10px !important; }
+        .checkbox-label input { width: auto; }
+    </style>
+</head>
+<body class="app-page">
+    <%- include('../components/header') %>
+    <%
+        const selectedAssociation = (typeof association !== 'undefined' && association)
+            || (typeof data !== 'undefined' && (Array.isArray(data) ? data[0] : data))
+            || {};
+        const associationId = selectedAssociation.association_id || selectedAssociation.id
+            || (typeof query !== 'undefined' && query.association_id) || '';
+    %>
+    <main class="app-main association-detail-main">
+        <a class="back-link" href="/associations">← Back to associations</a>
+
+        <div class="page-heading">
+            <div>
+                <p class="eyebrow">Member registration</p>
+                <h1>Join an association</h1>
+                <p class="page-intro">Complete the form below to register a member for a sports activity.</p>
+            </div>
+        </div>
+
+        <div class="management-layout">
+            <section class="panel" aria-labelledby="registration-form-title">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">Registration details</p>
+                        <h2 id="registration-form-title">Member information</h2>
+                    </div>
+                    <span class="panel-caption">Fields marked * are required</span>
+                </div>
+
+                <form action="/register" method="POST" class="stacked-form">
+                    <input type="hidden" name="association_id" value="<%= associationId %>">
+
+                    <div class="form-row">
+                        <label for="first_name">First name *
+                            <input type="text" id="first_name" name="first_name" maxlength="100" autocomplete="given-name" required>
+                        </label>
+                        <label for="last_name">Last name *
+                            <input type="text" id="last_name" name="last_name" maxlength="100" autocomplete="family-name" required>
+                        </label>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="birth_date">Date of birth *
+                            <input type="date" id="birth_date" name="birth_date" autocomplete="bday" required>
+                        </label>
+                        <label for="family_id">Family number *
+                            <input type="number" id="family_id" name="family_id" min="1" step="1" placeholder="e.g. 1042" required>
+                        </label>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="activity_id">Activity number *
+                            <input type="number" id="activity_id" name="activity_id" min="1" step="1" placeholder="e.g. 18" required>
+                        </label>
+                        <label for="pass_sport_code">Pass Sport code
+                            <input type="text" id="pass_sport_code" name="pass_sport_code" maxlength="50" placeholder="Optional">
+                        </label>
+                    </div>
+
+                    <label for="medical_certificate_date">Medical certificate date *
+                        <input type="date" id="medical_certificate_date" name="medical_certificate_date" required>
+                    </label>
+
+                    <label class="checkbox-label" for="is_resident">
+                        <input type="checkbox" id="is_resident" name="is_resident" value="true">
+                        I confirm that the member lives in the municipality.
+                    </label>
+
+                    <button type="submit" class="btn btn-primary form-submit">Submit registration</button>
+                </form>
+            </section>
+
+            <aside class="detail-callout" aria-labelledby="registration-summary-title">
+                <span class="callout-mark">+</span>
+                <p class="eyebrow">Your selection</p>
+                <h2 id="registration-summary-title"><%= selectedAssociation.name || selectedAssociation.association_name || 'Selected association' %></h2>
+                <p>Have the member’s family number, activity number, and valid medical certificate ready before submitting.</p>
+                <% if (selectedAssociation.contact_email) { %>
+                    <p><a href="mailto:<%= selectedAssociation.contact_email %>"><%= selectedAssociation.contact_email %></a></p>
+                <% } %>
+                <a class="btn btn-ghost" href="/associations">Choose another association</a>
+            </aside>
+        </div>
+    </main>
+</body>
+</html>

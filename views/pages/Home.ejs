@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SportConnect Pro — Réservation de créneaux et activités sportives</title>
+  <title>SportConnect Pro — Sports activities and scheduling</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,15 +11,17 @@
 </head>
 <body>
 
+  <% const activities = Array.isArray(data) ? data : (data && data.rows) || []; %>
+
   <header class="topbar">
     <a href="/" class="wordmark">SportConnect<span>Pro</span></a>
     <nav class="topnav">
-      <a href="/activites">Activités</a>
-      <a href="/equipements">Équipements</a>
+      <a href="/activities">Activities</a>
       <a href="/associations">Associations</a>
-      <a href="/tarifs">Tarifs</a>
+      <a href="/facilities">Facilities</a>
+      <a href="/about">About</a>
     </nav>
-    <a href="/creneaux" class="btn btn-ghost">Voir les créneaux</a>
+    <a href="/creneaux" class="btn btn-ghost">View schedules</a>
   </header>
 
   <main>
@@ -27,48 +29,48 @@
     <!-- HERO -->
     <section class="hero">
       <div class="hero-copy">
-        <p class="kicker">Direction des sports — service municipal en ligne</p>
-        <h1>Réservez un créneau. Rejoignez un club. Le tout depuis chez vous.</h1>
+        <p class="kicker">Sports department — municipal services online</p>
+        <h1>Book a schedule. Join a club. All from home.</h1>
         <p class="lede">
-          SportConnect Pro centralise les équipements sportifs municipaux, les
-          associations partenaires et leurs activités, pour que chaque habitant
-          trouve une place — au bon tarif, au bon horaire.
+          SportConnect Pro brings together municipal sports facilities, partner
+          associations, and their activities, so everyone can find a place —
+          at the right price and the right time.
         </p>
         <div class="hero-actions">
-          <a href="/creneaux" class="btn btn-primary">Voir les créneaux disponibles</a>
-          <a href="/tarifs" class="btn btn-text">Comment est calculé mon tarif ?</a>
+          <a href="/creneaux" class="btn btn-primary">View available schedules</a>
+          <a href="/tarifs" class="btn btn-text">How is my price calculated?</a>
         </div>
       </div>
 
-      <div class="hero-board" role="group" aria-label="Chiffres du jour">
-        <p class="board-label">Aujourd'hui</p>
+      <div class="hero-board" role="group" aria-label="Today's figures">
+        <p class="board-label">Today</p>
         <div class="board-row">
           <span class="board-number"><%= typeof stats !== 'undefined' && stats.openSlotsToday != null ? stats.openSlotsToday : '—' %></span>
-          <span class="board-desc">créneaux libres</span>
+          <span class="board-desc">open schedules</span>
         </div>
         <div class="board-row">
           <span class="board-number"><%= typeof stats !== 'undefined' && stats.totalFacilities != null ? stats.totalFacilities : '—' %></span>
-          <span class="board-desc">équipements ouverts au public</span>
+          <span class="board-desc">facilities open to the public</span>
         </div>
         <div class="board-row">
           <span class="board-number"><%= typeof stats !== 'undefined' && stats.totalActivities != null ? stats.totalActivities : '—' %></span>
-          <span class="board-desc">activités proposées</span>
+          <span class="board-desc">activities available</span>
         </div>
       </div>
     </section>
 
     <!-- ACTIVITIES LEDGER -->
-    <section class="section" aria-labelledby="activites-title">
+    <section class="section" aria-labelledby="activities-title">
       <div class="section-head">
-        <h2 id="activites-title">Activités &amp; prochains créneaux</h2>
-        <a href="/activites" class="link-more">Toutes les activités</a>
+        <h2 id="activities-title">Activities &amp; upcoming schedules</h2>
+        <a href="/activites" class="link-more">All activities</a>
       </div>
 
-      <div class="ledger" role="table" aria-label="Liste des activités">
+      <div class="ledger" role="table" aria-label="Activity list">
         <div class="ledger-row ledger-head" role="row">
-          <span role="columnheader">Activité</span>
-          <span role="columnheader">Catégorie d'âge</span>
-          <span role="columnheader">Prochain créneau</span>
+          <span role="columnheader">Activity</span>
+          <span role="columnheader">Age category</span>
+          <span role="columnheader">Next schedule</span>
           <span role="columnheader">Places</span>
         </div>
 
@@ -80,7 +82,7 @@
               <span role="cell" class="mono"><%= a.nextSlot || '—' %></span>
               <span role="cell">
                 <% if (typeof a.remainingSpots === 'number' && a.remainingSpots <= 0) { %>
-                  <span class="tag tag-full">complet</span>
+                  <span class="tag tag-full">full</span>
                 <% } else { %>
                   <%= a.remainingSpots != null ? a.remainingSpots : '—' %>
                 <% } %>
@@ -88,39 +90,39 @@
             </div>
           <% }); %>
         <% } else { %>
-          <div class="ledger-empty">Aucune activité à afficher pour l'instant. Revenez après la mise à jour du planning.</div>
+          <div class="ledger-empty">No activities to display yet. Check back after the schedule is updated.</div>
         <% } %>
       </div>
     </section>
 
     <!-- FACILITIES -->
-    <section class="section" aria-labelledby="equipements-title">
+    <section class="section" aria-labelledby="facilities-title">
       <div class="section-head">
-        <h2 id="equipements-title">Équipements municipaux</h2>
-        <a href="/equipements" class="link-more">Tous les équipements</a>
+        <h2 id="facilities-title">Municipal facilities</h2>
+        <a href="/facilities" class="link-more">All facilities</a>
       </div>
 
       <div class="facility-grid">
         <% if (typeof facilities !== 'undefined' && facilities.length) { %>
           <% facilities.forEach(function(f) { %>
             <article class="facility-card">
-              <p class="facility-type"><%= f.type || 'Équipement sportif' %></p>
+              <p class="facility-type"><%= f.type || 'Sports facility' %></p>
               <h3><%= f.name %></h3>
               <p class="facility-address"><%= f.address || '' %></p>
               <p class="facility-capacity"><%= f.capacity != null ? f.capacity + ' places' : '' %></p>
             </article>
           <% }); %>
         <% } else { %>
-          <p class="ledger-empty">Aucun équipement enregistré pour l'instant.</p>
+          <p class="ledger-empty">No facilities registered yet.</p>
         <% } %>
       </div>
     </section>
 
     <!-- ASSOCIATIONS -->
-    <section class="section section-tight" aria-labelledby="assoc-title">
+    <section class="section section-tight" aria-labelledby="associations-title">
       <div class="section-head">
-        <h2 id="assoc-title">Associations partenaires</h2>
-        <a href="/associations" class="link-more">Toutes les associations</a>
+        <h2 id="associations-title">Partner associations</h2>
+        <a href="/associations" class="link-more">All associations</a>
       </div>
       <ul class="assoc-strip">
         <% if (typeof associations !== 'undefined' && associations.length) { %>
@@ -128,61 +130,61 @@
             <li><%= as.name %></li>
           <% }); %>
         <% } else { %>
-          <li class="ledger-empty">Aucune association enregistrée pour l'instant.</li>
+          <li class="ledger-empty">No associations registered yet.</li>
         <% } %>
       </ul>
     </section>
 
     <!-- HOW IT WORKS -->
     <section class="section how">
-      <h2>Comment ça marche</h2>
+      <h2>How it works</h2>
       <ol class="how-steps">
         <li>
           <span class="how-index">1</span>
           <div>
-            <h3>Consultez les créneaux</h3>
-            <p>Filtrez par équipement, activité ou tranche d'âge pour voir les disponibilités réelles.</p>
+            <h3>Browse schedules</h3>
+            <p>Filter by facility, activity, or age group to see real availability.</p>
           </div>
         </li>
         <li>
           <span class="how-index">2</span>
           <div>
-            <h3>Vérifiez votre tarif</h3>
-            <p>Résident ou non, quotient familial, fratrie, Pass'Sport : le tarif est calculé avant la réservation.</p>
+            <h3>Check your price</h3>
+            <p>Residence, household income, siblings, and Pass'Sport are included before booking.</p>
           </div>
         </li>
         <li>
           <span class="how-index">3</span>
           <div>
-            <h3>Inscrivez-vous et payez</h3>
-            <p>Réglez en une fois ou en 3 fois. En cas de complet, une place en liste d'attente vous est proposée.</p>
+            <h3>Register and pay</h3>
+            <p>Pay in one or three installments. If an activity is full, you can join the waiting list.</p>
           </div>
         </li>
       </ol>
     </section>
 
     <!-- PRICING NOTE -->
-    <section class="section pricing-note" aria-labelledby="tarifs-title">
-      <h2 id="tarifs-title">Ce qui influence votre tarif</h2>
+    <section class="section pricing-note" aria-labelledby="pricing-title">
+      <h2 id="pricing-title">What influences your price</h2>
       <div class="pricing-grid">
         <div class="pricing-item">
-          <p class="pricing-label">Résidence</p>
-          <p>+35 % pour les habitants hors commune.</p>
+          <p class="pricing-label">Residence</p>
+          <p>+35% for residents outside the municipality.</p>
         </div>
         <div class="pricing-item">
-          <p class="pricing-label">Fratrie</p>
-          <p>-15 % à partir du 2ᵉ enfant inscrit, -30 % à partir du 3ᵉ.</p>
+          <p class="pricing-label">Siblings</p>
+          <p>-15% from the second enrolled child, -30% from the third.</p>
         </div>
         <div class="pricing-item">
-          <p class="pricing-label">Quotient familial</p>
-          <p>Remise appliquée automatiquement selon votre QF.</p>
+          <p class="pricing-label">Household income</p>
+          <p>A discount is automatically applied based on your household income.</p>
         </div>
         <div class="pricing-item">
           <p class="pricing-label">Pass'Sport</p>
-          <p>-50 € déduits directement si vous en bénéficiez.</p>
+          <p>€50 deducted directly if you are eligible.</p>
         </div>
       </div>
-      <p class="pricing-footnote">Un tarif plancher de 15 € s'applique dans tous les cas. Paiement possible en 3 fois.</p>
+      <p class="pricing-footnote">A minimum price of €15 applies in all cases. Payment is available in three installments.</p>
     </section>
 
   </main>
@@ -190,14 +192,14 @@
   <footer class="sitefoot">
     <div>
       <p class="wordmark small">SportConnect<span>Pro</span></p>
-      <p>Direction des sports — service municipal</p>
+      <p>Sports department — municipal services</p>
     </div>
     <div class="sitefoot-links">
-      <a href="/creneaux">Créneaux</a>
-      <a href="/activites">Activités</a>
-      <a href="/equipements">Équipements</a>
+      <a href="/creneaux">Schedules</a>
+      <a href="/activites">Activities</a>
+      <a href="/facilities">Facilities</a>
       <a href="/associations">Associations</a>
-      <a href="/tarifs">Tarifs</a>
+      <a href="/tarifs">Pricing</a>
     </div>
   </footer>
 

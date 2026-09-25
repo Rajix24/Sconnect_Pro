@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activities | SportConnect Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="app-page">
+    <%- include('../components/header') %>
+    <% const activities = Array.isArray(data) ? data : (data && data.rows) || []; %>
+    <main class="app-main">
+        <div class="page-heading">
+            <div><p class="eyebrow">Municipal management</p><h1>Sports activities</h1><p class="page-intro">Browse activities offered by partner associations and their schedules.</p></div>
+            <span class="count-pill"><%= activities.length %> activit<%= activities.length > 1 ? 'ies' : 'y' %></span>
+        </div>
+        <div class="toolbar">
+            <label class="search-field" for="activity-search"><span>Search</span><input id="activity-search" type="search" placeholder="Name, association, or facility" data-filter-input="activity-list"></label>
+            <span class="toolbar-note">Data updated from the municipal schedule</span>
+        </div>
+        <div class="activity-management-layout">
+            <section id="activity-list" class="activity-grid" aria-label="Activity list">
+                <% if (activities.length) { %>
+                    <% activities.forEach(function(activity) { %>
+                        <article class="activity-card" data-filter-item>
+                            <div class="card-topline"><span class="status-badge status-open">Scheduled</span><span class="activity-price"><%= activity.base_price != null ? Number(activity.base_price).toFixed(2) + ' €' : 'Price on request' %></span></div>
+                            <h2><%= activity.activity_name || 'Unnamed activity' %></h2>
+                            <p class="card-context"><%= activity.association_name || 'Partner association' %></p>
+                            <dl class="activity-meta">
+                                <div><dt>Facility</dt><dd><%= activity.facility_name || 'To be confirmed' %></dd></div>
+                                <div><dt>Schedule</dt><dd><%= activity.day_of_week || 'Schedule coming soon' %><% if (activity.start_time) { %> · <%= String(activity.start_time).slice(0, 5) %><% } %></dd></div>
+                                <div><dt>Audience</dt><dd><%= activity.age_category || 'All ages' %></dd></div>
+                            </dl>
+                            <div class="capacity-line"><span>Capacity</span><strong><%= activity.max_capacity != null ? activity.max_capacity + ' places' : 'Not provided' %></strong></div>
+                            <a class="btn btn-primary activity-show-btn" href="/activities/<%= activity.activity_id %>">See activity</a>
+                        </article>
+                    <% }); %>
+                <% } else { %>
+                    <div class="empty-state"><strong>No activities published</strong><span>Schedules will appear here as soon as they are available.</span></div>
+                <% } %>
+            </section>
+            <%- include('../components/activity_form') %>
+        </div>
+    </main>
+    <script>
+        document.querySelector('[data-filter-input]')?.addEventListener('input', function (event) {
+            const query = event.target.value.toLowerCase().trim();
+            document.querySelectorAll('[data-filter-item]').forEach(function (item) { item.hidden = query && !item.textContent.toLowerCase().includes(query); });
+        });
+    </script>
+</body>
+</html>

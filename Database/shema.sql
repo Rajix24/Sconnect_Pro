@@ -1,202 +1,131 @@
-CREATE TABLE facilities (
-    id_facilities SERIAL PRIMARY KEY,
-    name_facilities VARCHAR(150) NOT NULL,
-    erp_capacity_facilities INTEGER NOT NULL CHECK (erp_capacity_facilities > 0),
-    divisible_facilities BOOLEAN NOT NULL DEFAULT FALSE
-);
+DROP TABLE IF EXISTS waiting_list CASCADE;
 
+DROP TABLE IF EXISTS registrations CASCADE;
 
-CREATE TABLE associations (
-    id_associations SERIAL PRIMARY KEY,
-    name_associations VARCHAR(150) NOT NULL UNIQUE
-);
+DROP TABLE IF EXISTS activities CASCADE;
 
+DROP TABLE IF EXISTS facilities CASCADE;
+
+DROP TABLE IF EXISTS associations CASCADE;
+
+DROP TABLE IF EXISTS members CASCADE;
+
+DROP TABLE IF EXISTS families CASCADE;
+
+DROP TYPE IF EXISTS waiting_status CASCADE;
+
+DROP TYPE IF EXISTS registration_status CASCADE;
+
+CREATE TYPE registration_status AS ENUM ('confirmed', 'cancelled', 'medical_non_compliant');
+
+CREATE TYPE waiting_status AS ENUM ('waiting', 'promoted_pending', 'expired', 'converted');
 
 CREATE TABLE families (
-    id_families SERIAL PRIMARY KEY,
-    quotient_familial_families NUMERIC(10,2) NOT NULL
-        CHECK (quotient_familial_families >= 0)
+    id BIGINT PRIMARY KEY,
+    family_name VARCHAR(255) NOT NULL,
+    quotient_familial NUMERIC(10, 2) NOT NULL CHECK (quotient_familial >= 0),
+    address TEXT NOT NULL,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
-
-CREATE TYPE age_category_enum AS ENUM (
-    'baby_sport',
-    'poussin',
-    'benjamin',
-    'minime',
-    'cadet',
-    'junior',
-    'senior',
-    'veteran',
-    'tous_publics'
-);
-
-
-CREATE TABLE activities (
-    id_activities SERIAL PRIMARY KEY,
-
-    association_id_activities INTEGER NOT NULL
-        REFERENCES associations(id_associations)
-        ON DELETE RESTRICT,
-
-    facility_id_activities INTEGER NOT NULL
-        REFERENCES facilities(id_facilities)
-        ON DELETE RESTRICT,
-
-    name_activities VARCHAR(150) NOT NULL,
-
-    base_price_activities NUMERIC(10,2) NOT NULL
-        CHECK (base_price_activities >= 0),
-
-    max_capacity_activities INTEGER NOT NULL
-        CHECK (max_capacity_activities > 0),
-
-    age_category_activities age_category_enum NOT NULL,
-
-    requires_recent_certificate_activities BOOLEAN NOT NULL DEFAULT FALSE,
-
-    day_of_week_activities SMALLINT NOT NULL
-        CHECK (day_of_week_activities BETWEEN 0 AND 6),
-
-    start_time_activities TIME NOT NULL,
-
-    end_time_activities TIME NOT NULL
-        CHECK (end_time_activities > start_time_activities),
-
-    sub_zone_activities VARCHAR(50)
-);
-
 
 CREATE TABLE members (
-    id_members SERIAL PRIMARY KEY,
-
-    family_id_members INTEGER NOT NULL
-        REFERENCES families(id_families)
-        ON DELETE CASCADE,
-
-    first_name_members VARCHAR(100) NOT NULL,
-
-    last_name_members VARCHAR(100) NOT NULL,
-
-    birth_date_members DATE NOT NULL,
-
-    is_resident_members BOOLEAN NOT NULL DEFAULT FALSE,
-
-    medical_certificate_date_members DATE,
-
-    medical_status_members VARCHAR(30) NOT NULL DEFAULT 'compliant'
-        CHECK (
-            medical_status_members IN (
-                'compliant',
-                'medical_non_compliant'
-            )
-        ),
-
-    pass_sport_code_members VARCHAR(20)
+    id BIGSERIAL PRIMARY KEY,
+    is_resident BOOLEAN NOT NULL,
+    family_id BIGINT NOT NULL REFERENCES families (id) ON DELETE CASCADE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
+    medical_certificate_date DATE NOT NULL,
+    pass_sport_code VARCHAR(50) DEFAULT NULL,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE associations (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact_email VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    phone VARCHAR(20) NOT NULL,
+    base_price NUMERIC(10, 2) NOT NULL,
+    siren_number VARCHAR(14) NOT NULL UNIQUE,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE facilities (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    erp_capacity INT NOT NULL CHECK (erp_capacity > 0),
+    is_divisible BOOLEAN NOT NULL DEFAULT FALSE,
+    parent_facility_id BIGINT REFERENCES facilities (id) ON DELETE SET NULL,
+    association_id BIGINT NOT NULL REFERENCES associations (id) ON DELETE CASCADE,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE activities (
+    id BIGSERIAL PRIMARY KEY,
+    association_id BIGINT NOT NULL REFERENCES associations (id) ON DELETE CASCADE,
+    facility_id BIGINT NOT NULL REFERENCES facilities (id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    base_price NUMERIC(10, 2) NOT NULL CHECK (base_price >= 0),
+    max_capacity INT NOT NULL CHECK (max_capacity > 0),
+    activity_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT check_time_order CHECK (end_time > start_time)
+);
 
 CREATE TABLE registrations (
-    id_registrations SERIAL PRIMARY KEY,
-
-    member_id_registrations INTEGER NOT NULL
-        REFERENCES members(id_members)
-        ON DELETE CASCADE,
-
-    activity_id_registrations INTEGER NOT NULL
-        REFERENCES activities(id_activities)
-        ON DELETE RESTRICT,
-
-    final_price_registrations NUMERIC(10,2) NOT NULL
-        CHECK (final_price_registrations >= 15.00),
-
-    payment_plan_registrations VARCHAR(15) NOT NULL DEFAULT 'full'
-        CHECK (
-            payment_plan_registrations IN (
-                'full',
-                'installments'
-            )
-        ),
-
-    status_registrations VARCHAR(20) NOT NULL DEFAULT 'confirmed'
-        CHECK (
-            status_registrations IN (
-                'confirmed',
-                'cancelled'
-            )
-        ),
-
-    registered_at_registrations TIMESTAMPTZ NOT NULL DEFAULT now(),
-
-    UNIQUE (
-        member_id_registrations,
-        activity_id_registrations
-    )
+    id BIGSERIAL PRIMARY KEY,
+    member_id BIGINT NOT NULL REFERENCES members (id) ON DELETE CASCADE,
+    activity_id BIGINT NOT NULL REFERENCES activities (id) ON DELETE CASCADE,
+    base_price NUMERIC(10, 2) NOT NULL CHECK (base_price >= 0),
+    final_price NUMERIC(10, 2) NOT NULL CHECK (final_price >= 15.00),
+    status registration_status NOT NULL DEFAULT 'confirmed',
+    registered_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT unique_member_activity UNIQUE (member_id, activity_id)
 );
-
-
-CREATE TABLE payments (
-    id_payments SERIAL PRIMARY KEY,
-
-    registration_id_payments INTEGER NOT NULL
-        REFERENCES registrations(id_registrations)
-        ON DELETE CASCADE,
-
-    installment_number_payments SMALLINT NOT NULL
-        CHECK (installment_number_payments BETWEEN 1 AND 3),
-
-    amount_payments NUMERIC(10,2) NOT NULL
-        CHECK (amount_payments >= 0),
-
-    due_date_payments DATE NOT NULL,
-
-    paid_at_payments TIMESTAMPTZ,
-
-    status_payments VARCHAR(20) NOT NULL DEFAULT 'pending'
-        CHECK (
-            status_payments IN (
-                'pending',
-                'paid',
-                'failed'
-            )
-        ),
-
-    UNIQUE (
-        registration_id_payments,
-        installment_number_payments
-    )
-);
-
 
 CREATE TABLE waiting_list (
-    id_waiting_list SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
+    activity_id BIGINT NOT NULL REFERENCES activities (id) ON DELETE CASCADE,
+    member_id BIGINT NOT NULL REFERENCES members (id) ON DELETE CASCADE,
+    is_resident BOOLEAN NOT NULL,
+    family_id BIGINT NOT NULL REFERENCES families (id) ON DELETE CASCADE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
+    status waiting_status NOT NULL DEFAULT 'waiting',
+    medical_certificate_date DATE NOT NULL,
+    pass_sport_code VARCHAR(50) DEFAULT NULL,
+    priority_score INT DEFAULT 0,
+    registered_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-    activity_id_waiting_list INTEGER NOT NULL
-        REFERENCES activities(id_activities)
-        ON DELETE CASCADE,
+CREATE INDEX idx_members_family_id ON members (family_id);
 
-    member_id_waiting_list INTEGER NOT NULL
-        REFERENCES members(id_members)
-        ON DELETE CASCADE,
+CREATE INDEX idx_activities_facility_id ON activities (facility_id);
 
-    priority_score_waiting_list INTEGER NOT NULL DEFAULT 0,
+CREATE INDEX idx_activities_association_id ON activities (association_id);
 
-    status_waiting_list VARCHAR(20) NOT NULL DEFAULT 'waiting'
-        CHECK (
-            status_waiting_list IN (
-                'waiting',
-                'promoted_pending',
-                'expired',
-                'confirmed'
-            )
-        ),
+CREATE INDEX idx_registrations_activity_status ON registrations (activity_id, status);
 
-    deadline_confirmation_waiting_list TIMESTAMPTZ,
-
-    created_at_waiting_list TIMESTAMPTZ NOT NULL DEFAULT now(),
-
-    UNIQUE (
-        member_id_waiting_list,
-        activity_id_waiting_list
-    )
+CREATE INDEX idx_waiting_list_activity_priority ON waiting_list (
+    activity_id,
+    priority_score DESC,
+    registered_at ASC
 );

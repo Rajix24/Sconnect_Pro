@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit association | SportConnect Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="app-page">
+    <%- include('../components/header') %>
+    <% const association = Array.isArray(data) ? data[0] : data; %>
+    <main class="app-main association-detail-main">
+        <a class="back-link" href="<%= association ? '/associations/' + (association.association_id || association.id) : '/associations' %>">← Back to association</a>
+
+        <% if (association) { %>
+            <% const associationId = association.association_id || association.id; %>
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">Partner association</p>
+                    <h1>Edit association</h1>
+                    <p class="page-intro">Update the contact and pricing information for <strong><%= association.association_name || association.name || 'this association' %></strong>.</p>
+                </div>
+            </div>
+
+            <div class="management-layout">
+                <section class="panel form-panel" aria-labelledby="edit-association-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Association details</p>
+                            <h2 id="edit-association-title">Update information</h2>
+                        </div>
+                        <span class="panel-caption">Fields marked * are required</span>
+                    </div>
+
+                    <form action="/association/edit/<%= associationId %>" method="POST" class="stacked-form">
+                        <label for="name">Association name *
+                            <input type="text" id="name" name="name" value="<%= association.association_name || association.name || '' %>" maxlength="150" autocomplete="organization" required>
+                        </label>
+
+                        <label for="contact_email">Contact email *
+                            <input type="email" id="contact_email" name="contact_email" value="<%= association.contact_email || '' %>" maxlength="255" autocomplete="email" required>
+                        </label>
+
+                        <div class="form-row">
+                            <label for="phone">Phone
+                                <input type="tel" id="phone" name="phone" value="<%= association.phone || '' %>" maxlength="30" autocomplete="tel">
+                            </label>
+                            <label for="base_price">Base price
+                                <input type="number" id="base_price" name="base_price" value="<%= association.base_price != null ? association.base_price : '' %>" min="0" step="0.01" inputmode="decimal">
+                            </label>
+                        </div>
+
+                        <label for="siren_number">SIREN number
+                            <input type="text" id="siren_number" name="siren_number" value="<%= association.siren_number || '' %>" maxlength="14" inputmode="numeric">
+                        </label>
+
+                        <label for="description">Description
+                            <textarea id="description" name="description" rows="5" maxlength="1000" placeholder="A few words about the association"><%= association.description || '' %></textarea>
+                        </label>
+
+                        <div class="form-actions">
+                            <a class="btn btn-ghost" href="/associations/<%= associationId %>">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </section>
+
+                <aside class="detail-callout" aria-labelledby="edit-association-summary">
+                    <span class="callout-mark">+</span>
+                    <p class="eyebrow">Editing association</p>
+                    <h2 id="edit-association-summary"><%= association.association_name || association.name || 'Unnamed association' %></h2>
+                    <p>Keep the association’s contact details current so members and municipal teams can reach the right people.</p>
+                    <a class="btn btn-ghost" href="/associations/<%= associationId %>">View association</a>
+                </aside>
+            </div>
+        <% } else { %>
+            <section class="empty-state association-detail-empty">
+                <strong>Association not found</strong>
+                <span>Return to the directory to choose an association.</span>
+                <a class="btn btn-primary" href="/associations">View associations</a>
+            </section>
+        <% } %>
+    </main>
+</body>
+</html>

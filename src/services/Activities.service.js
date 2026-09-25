@@ -1,69 +1,66 @@
 const db = require("../config/db").getPool()
 
-async function getAllActivites(){
+async function getAllActivites() {
     const query = `
-            SELECT
-                ac.id_activities AS activity_id,
-                ac.name_activities AS activity_name,
-                ac.base_price_activities AS base_price,
-                ac.max_capacity_activities AS max_capacity,
-                ac.age_category_activities AS age_category,
-                ac.requires_recent_certificate_activities AS requires_recent_certificate,
-                ac.day_of_week_activities AS day_of_week,
-                ac.start_time_activities AS start_time,
-                ac.end_time_activities AS end_time,
-                ac.sub_zone_activities AS sub_zone,
+        SELECT
+            ac.id AS activity_id,
+            ac.title AS activity_name,
+            ac.base_price AS base_price,
+            ac.max_capacity AS max_capacity,
+            ac.activity_date AS activity_date,
+            ac.start_time AS start_time,
+            ac.end_time AS end_time,
 
-                asso.name_associations AS association_name,
+            asso.name AS association_name,
 
-                f.name_facilities AS facility_name,
-                f.erp_capacity_facilities AS erp_capacity,
-                f.divisible_facilities AS divisible
+            f.name AS facility_name,
+            f.erp_capacity AS erp_capacity,
+            f.is_divisible AS divisible
 
-            FROM activities AS ac
+        FROM activities AS ac
 
-            JOIN associations AS asso
-                ON ac.association_id_activities = asso.id_associations
+        JOIN associations AS asso
+            ON ac.association_id = asso.id
 
-            JOIN facilities AS f
-                ON ac.facility_id_activities = f.id_facilities;
-            `
-    const Activities = await db.query(query)
-    return Activities;
+        JOIN facilities AS f
+            ON ac.facility_id = f.id;
+    `;
+
+    const activities = await db.query(query);
+
+    return activities.rows;
 }
 
 async function getActivityById(activityId) {
     const query = `
         SELECT
-            ac.id_activities AS activity_id,
-            ac.name_activities AS activity_name,
-            ac.base_price_activities AS base_price,
-            ac.max_capacity_activities AS max_capacity,
-            ac.age_category_activities AS age_category,
-            ac.requires_recent_certificate_activities AS requires_recent_certificate,
-            ac.day_of_week_activities AS day_of_week,
-            ac.start_time_activities AS start_time,
-            ac.end_time_activities AS end_time,
-            ac.sub_zone_activities AS sub_zone,
+            ac.id AS activity_id,
+            ac.title AS activity_name,
+            ac.base_price AS base_price,
+            ac.max_capacity AS max_capacity,
+            ac.activity_date AS activity_date,
+            ac.start_time AS start_time,
+            ac.end_time AS end_time,
 
-            asso.name_associations AS association_name,
+            asso.name AS association_name,
 
-            f.name_facilities AS facility_name,
-            f.erp_capacity_facilities AS erp_capacity,
-            f.divisible_facilities AS divisible
+            f.name AS facility_name,
+            f.erp_capacity AS erp_capacity,
+            f.is_divisible AS divisible
 
         FROM activities AS ac
 
         JOIN associations AS asso
-            ON ac.association_id_activities = asso.id_associations
+            ON ac.association_id = asso.id
 
         JOIN facilities AS f
-            ON ac.facility_id_activities = f.id_facilities
+            ON ac.facility_id = f.id
 
-        WHERE ac.id_activities = $1;
+        WHERE ac.id = $1;
     `;
 
     const result = await db.query(query, [activityId]);
+
     return result.rows[0];
 }
 
@@ -71,38 +68,35 @@ async function getActivityById(activityId) {
 async function getActivitiesByAssociationId(associationId) {
     const query = `
         SELECT
-            ac.id_activities AS activity_id,
-            ac.name_activities AS activity_name,
-            ac.base_price_activities AS base_price,
-            ac.max_capacity_activities AS max_capacity,
-            ac.age_category_activities AS age_category,
-            ac.requires_recent_certificate_activities AS requires_recent_certificate,
-            ac.day_of_week_activities AS day_of_week,
-            ac.start_time_activities AS start_time,
-            ac.end_time_activities AS end_time,
-            ac.sub_zone_activities AS sub_zone,
+            ac.id AS activity_id,
+            ac.title AS activity_name,
+            ac.base_price AS base_price,
+            ac.max_capacity AS max_capacity,
+            ac.activity_date AS activity_date,
+            ac.start_time AS start_time,
+            ac.end_time AS end_time,
 
-            asso.name_associations AS association_name,
+            asso.name AS association_name,
 
-            f.name_facilities AS facility_name,
-            f.erp_capacity_facilities AS erp_capacity,
-            f.divisible_facilities AS divisible
+            f.name AS facility_name,
+            f.erp_capacity AS erp_capacity,
+            f.is_divisible AS divisible
 
         FROM activities AS ac
 
         JOIN associations AS asso
-            ON ac.association_id_activities = asso.id_associations
+            ON ac.association_id = asso.id
 
         JOIN facilities AS f
-            ON ac.facility_id_activities = f.id_facilities
+            ON ac.facility_id = f.id
 
-        WHERE ac.association_id_activities = $1;
+        WHERE ac.association_id = $1;
     `;
 
     const result = await db.query(query, [associationId]);
+
     return result.rows;
 }
-
 module.exports = {
     getAllActivites,
     getActivityById,

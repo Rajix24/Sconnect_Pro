@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associations | SportConnect Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="app-page">
+    <%- include('../components/header') %>
+    <% const associations = Array.isArray(data) ? data : (data && data.rows) || []; %>
+    <main class="app-main">
+        <div class="page-heading">
+            <div><p class="eyebrow">Local sports network</p><h1>Partner associations</h1><p class="page-intro">Manage the organizations that bring the municipality's sports activities to life.</p></div>
+            <span class="count-pill"><%= associations.length %> partner<%= associations.length > 1 ? 's' : '' %></span>
+        </div>
+        <div class="management-layout">
+            <section class="panel association-panel" aria-labelledby="association-list-title">
+                <div class="panel-heading"><div><p class="eyebrow">Directory</p><h2 id="association-list-title">All associations</h2></div><span class="panel-caption">Contacts and pricing</span></div>
+                <div class="table-wrap"><table class="data-table"><thead><tr><th>Association</th><th>Contact</th><th>Base price</th><th>SIREN</th><th>Action</th></tr></thead><tbody>
+                    <% if (associations.length) { %>
+                        <% associations.forEach(function(association) { %>
+                            <tr><td><strong><%= association.association_name || 'Unnamed association' %></strong><small><%= association.description || 'Municipal sports partner' %></small></td><td><a href="mailto:<%= association.contact_email %>"><%= association.contact_email || 'Not provided' %></a><small><%= association.phone || 'Phone not provided' %></small></td><td class="table-number"><%= association.base_price != null ? Number(association.base_price).toFixed(2) + ' €' : '—' %></td><td class="mono"><%= association.siren_number || '—' %></td><td><a class="table-action" href="/associations/<%= association.association_id %>">Register</a></td></tr>
+                        <% }); %>
+                    <% } else { %><tr><td colspan="5" class="table-empty">No associations registered yet.</td></tr><% } %>
+                </tbody></table></div>
+            </section>
+            <%- include('../components/association_form') %>
+        </div>
+    </main>
+</body>
+</html>
